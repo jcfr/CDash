@@ -308,6 +308,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
 
   xml_set_element_handler($parser, array($handler, 'startElement'), array($handler, 'endElement'));
   xml_set_character_data_handler($parser, array($handler, 'text'));
+  pdo_query("START TRANSACTION");
   xml_parse($parser, $content, false);
 
   $projectname = get_project_name($projectid);
@@ -333,6 +334,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
     echo $query_array['id'];
     echo "The submission is banned from this CDash server.";
     add_log("Submission is banned from this CDash server","ctestparser");
+    pdo_query("ROLLBACK");
     return;
     }
 
@@ -341,6 +343,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
                               $sitename, $stamp, $file . ".xml");
   if ($filename === false)
     {
+    pdo_query("ROLLBACK");
     return $handler;
     }
 
@@ -367,6 +370,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
       {
       displayReturnStatus($statusarray);
       add_log("Checksum failure on file: $filename", "ctest_parse", LOG_ERR, $projectid);
+      pdo_query("ROLLBACK");
       return FALSE;
       }
     }
@@ -380,6 +384,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
       $statusarray['status'] = 'ERROR';
       $statusarray['message'] = $parsingerror;
       displayReturnStatus($statusarray);
+      pdo_query("ROLLBACK");
       exit();
       }
     }
@@ -389,6 +394,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
     $statusarray['message'] = "ERROR: Cannot open file ($filename)";
     displayReturnStatus($statusarray);
     add_log("Cannot open file ($filename)", "parse_xml_file",LOG_ERR);
+    pdo_query("ROLLBACK");
     return $handler;
     }
 
@@ -412,6 +418,7 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
     xml_parse($parser,$content, false);
     }
   xml_parse($parser, null, true);
+  pdo_query("COMMIT");
   xml_parser_free($parser);
   fclose($parseHandle);
   unset($parseHandle);

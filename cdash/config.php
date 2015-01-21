@@ -44,6 +44,7 @@ $CDASH_TESTING_MODE = false;
 $CDASH_TESTING_RENAME_LOGS = false;
 // Should we use asynchronous submission
 $CDASH_ASYNCHRONOUS_SUBMISSION = false;
+$CDASH_ASYNC_WORKERS = 1;
 // Main title and subtitle for the index page
 $CDASH_MAININDEX_TITLE = 'CDash';
 $CDASH_MAININDEX_SUBTITLE = 'Projects';
