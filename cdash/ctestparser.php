@@ -201,6 +201,9 @@ function parse_put_submission($filehandler, $projectid, $expected_md5)
 function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=true,
                      $scheduleid=0)
 {
+  global $CDASH_QUERY_TIME;
+  $CDASH_QUERY_TIME = 0.0;
+  $start = microtime_float();
   include 'cdash/config.php';
   require_once 'cdash/common.php';
   require_once 'models/project.php';
@@ -429,6 +432,11 @@ function ctest_parse($filehandler, $projectid, $expected_md5='', $do_checksum=tr
     }
 
   displayReturnStatus($statusarray);
+  $end = microtime_float();
+  $elapsed = microtime_float() - $start - $CDASH_QUERY_TIME;
+  file_put_contents("/tmp/$file.txt", round($elapsed,3)."\n", FILE_APPEND);
+  file_put_contents("/tmp/query_$file.txt", round($CDASH_QUERY_TIME,3)."\n", FILE_APPEND);
+  $CDASH_QUERY_TIME = 0.0;
   return $handler;
 }
 

@@ -26,6 +26,7 @@ function do_submit($filehandle, $projectid, $expected_md5='', $do_checksum=true,
                    $submission_id=0)
 {
   include('cdash/config.php');
+  $start = microtime_float();
 
   // We find the daily updates
   // If we have php curl we do it asynchronously
@@ -74,7 +75,10 @@ function do_submit($filehandle, $projectid, $expected_md5='', $do_checksum=true,
     }
 
   // Parse the XML file
+  $end = microtime_float();
+  file_put_contents("/tmp/before.txt", round($end-$start,3)."\n", FILE_APPEND);
   $handler = ctest_parse($filehandle,$projectid, $expected_md5, $do_checksum, $scheduleid);
+  $start = microtime_float();
   //this is the md5 checksum fail case
   if($handler == FALSE)
     {
@@ -97,6 +101,8 @@ function do_submit($filehandle, $projectid, $expected_md5='', $do_checksum=true,
 
   // Create the RSS feed
   CreateRSSFeed($projectid);
+  $end = microtime_float();
+  file_put_contents("/tmp/after.txt", round($end-$start,3)."\n", FILE_APPEND);
 }
 
 /** Asynchronous submission */
@@ -491,7 +497,7 @@ function trigger_process_submissions($projectid)
     // Obtain the processing lock before firing off parallel workers.
     $mypid = getmypid();
     include("cdash/submission_functions.php");
-    if (AcquireProcessingLock($projectid, $force, $mypid))
+    if (AcquireProcessingLock($projectid, false, $mypid))
       {
       $url = $currentURI."/cdash/processsubmissions.php";
       $params = array('projectid' => $projectid, 'pid' => $mypid);

@@ -279,7 +279,7 @@ function pdo_affected_rows($result)
 /** */
 function pdo_query($query, $link_identifier = NULL)
 {
-  global $CDASH_DB_TYPE;
+  global $CDASH_DB_TYPE, $CDASH_QUERY_TIME;
 
   if(isset($CDASH_DB_TYPE)  && $CDASH_DB_TYPE!="mysql")
     {
@@ -287,7 +287,10 @@ function pdo_query($query, $link_identifier = NULL)
     }
   else
     {
-    return mysql_query($query, get_link_identifier($link_identifier));
+    $start = microtime_float();
+    $result = mysql_query($query, get_link_identifier($link_identifier));
+    $CDASH_QUERY_TIME += (microtime_float() - $start);
+    return $result;
     }
 }
 
