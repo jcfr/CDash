@@ -738,8 +738,8 @@ function generate_main_dashboard_XML($project_instance, $date)
                   LEFT JOIN label2build AS l2b ON (l2b.buildid = b.id)
                   LEFT JOIN label AS l ON (l.id = l2b.labelid)
                   WHERE b.projectid='$projectid' $parent_clause $date_clause
-                  ".$subprojectsql." ".$filter_sql." ".$limit_sql
-                  .$groupby_sql;
+                  ".$subprojectsql." ".$filter_sql." ".$groupby_sql
+                  .$limit_sql;
 
   // We shouldn't get any builds for group that have been deleted (otherwise something is wrong)
   $builds = pdo_query($sql);
