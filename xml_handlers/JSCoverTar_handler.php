@@ -103,7 +103,6 @@ class JSCoverTarHandler
         return;
         }
       $path = $coverageName;
-      $coverageFile->FullPath = $path;
       if(!array_key_exists($path, $coverageEntries))
         {
         $coverageFile = new CoverageFile();
@@ -164,7 +163,7 @@ class JSCoverTarHandler
       else
         {
         $coverage = $coverageEntries[$path];
-        $coverageFile=$coverage->CoverageFile;
+        $coverageFile = $coverage->CoverageFile;
         $fileid = $coverageFile->Id;
         $coverageLines = $coverageEntry['coverage'];
         $fileLength = count($coverageLines);
@@ -179,7 +178,7 @@ class JSCoverTarHandler
         }
       $buildid = $coverageSummary->BuildId;
       $coverageFile->Id = $fileid;
-      $coverageFile->FullPath=$path;
+      $coverageFile->FullPath = $path;
       // Save these models to the database.
       $coverageFile->Update($buildid);
       $coverageFileLog->BuildId = $buildid;
